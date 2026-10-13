@@ -2,6 +2,7 @@ import sqlite3
 
 
 class Database:
+    """Класс работы с SQLite-БД."""
 
     def __init__(self, db_path: str = ":memory:"):
         self._conn = sqlite3.connect(db_path)
@@ -14,6 +15,7 @@ class Database:
                 login            TEXT NOT NULL,
                 password         TEXT NOT NULL,
                 confirm_password TEXT NOT NULL,
+                login_type       TEXT NOT NULL,
                 result           INTEGER NOT NULL,
                 error_message    TEXT,
                 PRIMARY KEY (login, password, confirm_password)
@@ -22,16 +24,21 @@ class Database:
         )
         self._conn.commit()
 
-    def add_record(self, login, password, confirm_password, result, error_message):
+    def add_record(self, login, password, confirm_password,
+                   login_type, result, error_message):
         self._conn.execute(
-            "INSERT OR REPLACE INTO records VALUES (?, ?, ?, ?, ?)",
-            (login, password, confirm_password, int(result), error_message),
+            "INSERT OR REPLACE INTO records "
+            "(login, password, confirm_password, login_type, result, error_message) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (login, password, confirm_password, login_type,
+             int(result), error_message),
         )
         self._conn.commit()
 
     def get_record(self, login, password, confirm_password):
+        """Возвращает (result, error_message, login_type) или None."""
         cur = self._conn.execute(
-            "SELECT result, error_message FROM records "
+            "SELECT result, error_message, login_type FROM records "
             "WHERE login=? AND password=? AND confirm_password=?",
             (login, password, confirm_password),
         )
