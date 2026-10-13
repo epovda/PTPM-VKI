@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class ExternalService(ABC):
+    """Интерфейс внешней зависимости (например, email-сервер)."""
 
     @abstractmethod
     def send(self, data: str) -> None:
@@ -9,7 +10,7 @@ class ExternalService(ABC):
 
 
 class EmailService(ExternalService):
-    """Имитация отправки данных на внешний email-сервер."""
+    """Имитация отправки результата на внешний сервер."""
 
     def __init__(self):
         self.sent = []
